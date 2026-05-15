@@ -6,6 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Eye, Plus, Pencil, Trash2, Save, X, Search, MoreVertical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import Breadcrumbs from '@/components/ui/breadcrumbs'
+import ProgressBar from '@/components/ui/progress-bar'
 import { ToastContainer } from '@/components/toast-container'
 import { useToasts } from '@/hooks/use-toasts'
 
@@ -278,7 +280,7 @@ export function ObservacionesView() {
   }
 
   const filteredObs = observaciones.filter((o) => {
-    const matchSearch = searchQuery === '' || 
+    const matchSearch = searchQuery === '' ||
       o.comentarios?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       o.problemaDetectado?.toLowerCase().includes(searchQuery.toLowerCase())
     const matchParticipante = filterParticipante === '' || o.participanteId === filterParticipante
@@ -528,6 +530,7 @@ export function ObservacionesView() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumbs items={[{ label: "Dashboard", href: "/" }, { label: "Observaciones" }]} />
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Registro de Observación</h2>
         <Button onClick={() => { setIsForm(true); reset(); setEditingId(null) }} className="flex items-center gap-2">
@@ -535,6 +538,11 @@ export function ObservacionesView() {
           Crear Observación
         </Button>
       </div>
+      <ProgressBar
+        current={observaciones.filter((o) => o.exito).length}
+        total={observaciones.length}
+        label="Tareas observadas completadas"
+      />
 
       <div className="space-y-3">
         <div className="relative">
@@ -572,7 +580,11 @@ export function ObservacionesView() {
           </select>
         </div>
       </div>
-
+      <ProgressBar
+        current={observaciones.length}
+        total={tareasOptions.length}
+        label="Progreso de observaciones"
+      />
       <div className="grid grid-cols-1 gap-3">
         {filteredObs.map((obs) => {
           const estatus = obs.exito ? 'Exitoso' : obs.cantidadErrores > 2 ? 'Fallido' : 'Parcial'
@@ -627,9 +639,12 @@ export function ObservacionesView() {
                     {getParticipanteLabel(obs.participanteId)} - {getTareaLabel(obs.tareaId)}
                   </h3>
                 </div>
-                <div className={`px-2 py-1 rounded text-xs font-medium ${estatusColor}`}>
+                <span
+                  className={`px-2 py-1 rounded text-xs font-medium ${estatusColor}`}
+                  title="Estado de la observación (Exitoso, Parcial, Fallido)"
+                >
                   {estatus}
-                </div>
+                </span>
               </div>
 
               <div className="space-y-2 text-xs">
@@ -639,7 +654,10 @@ export function ObservacionesView() {
                 </div>
                 {obs.severidad && (
                   <div>
-                    <span className={`inline-block px-2 py-1 rounded text-xs font-medium border ${SEVERIDAD_LABELS[obs.severidad]?.class}`}>
+                    <span
+                      title={`Severidad ${SEVERIDAD_LABELS[obs.severidad]?.label}: revisa el problema detectado`}
+                      className={`inline-block px-2 py-1 rounded text-xs font-medium border ${SEVERIDAD_LABELS[obs.severidad]?.class}`}
+                    >
                       {SEVERIDAD_LABELS[obs.severidad]?.label}
                     </span>
                   </div>

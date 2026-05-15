@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { ToastContainer } from '@/components/toast-container'
 import { useToasts } from '@/hooks/use-toasts'
 import { cn } from '@/lib/utils'
+import ConfirmDeleteModal from '@/components/ui/confirm-delete-modal'
 
 const participanteSchema = z.object({
   nombre: z.string().min(2).max(100),
@@ -43,7 +44,8 @@ export function ParticipantesView() {
   const [participantes, setParticipantes] = useState<Participante[]>([])
   const [isForm, setIsForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [deleteConfirm, setDeleteConfirm] = useState<Participante | null>(null)
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [participantToDelete, setParticipantToDelete] = useState<{ id: string; name: string } | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterPerfil, setFilterPerfil] = useState('')
   const { toasts, addToast, removeToast } = useToasts()
@@ -108,7 +110,7 @@ export function ParticipantesView() {
   // Filter participantes based on search and profile
   const filteredParticipantes = useMemo(() => {
     return participantes.filter((p) => {
-      const matchesSearch = searchQuery === '' || 
+      const matchesSearch = searchQuery === '' ||
         p.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.perfil.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesPerfil = filterPerfil === '' || p.perfil === filterPerfil
@@ -184,25 +186,22 @@ export function ParticipantesView() {
     setIsForm(true)
   }
 
-  const handleDelete = async () => {
-    if (deleteConfirm) {
-      try {
-        const response = await fetch(`${getApiBaseUrl()}/api/participantes/${deleteConfirm.id}`, {
-          method: 'DELETE',
-        })
+  const handleDelete = async (target: { id: number }) => {
+    try {
+      const response = await fetch(`${getApiBaseUrl()}/api/participantes/${target.id}`, {
+        method: 'DELETE',
+      })
 
-        if (!response.ok) {
-          const message = await getApiErrorMessage(response)
-          throw new Error(message)
-        }
-
-        setParticipantes((prev) => prev.filter((p) => p.id !== deleteConfirm.id))
-        addToast('success', 'Participante eliminado')
-        setDeleteConfirm(null)
-      } catch (error) {
-        const message = error instanceof Error ? error.message : 'No se pudo eliminar el participante'
-        addToast('error', 'No se pudo eliminar el participante', message)
+      if (!response.ok) {
+        const message = await getApiErrorMessage(response)
+        throw new Error(message)
       }
+
+      setParticipantes((prev) => prev.filter((p) => p.id !== String(target.id)))
+      addToast('success', 'Participante eliminado')
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se pudo eliminar el participante'
+      addToast('error', 'No se pudo eliminar el participante', message)
     }
   }
 
@@ -367,7 +366,10 @@ export function ParticipantesView() {
                             <Pencil className="w-4 h-4 text-primary" />
                           </button>
                           <button
-                            onClick={() => setDeleteConfirm(participante)}
+                            onClick={() => {
+                              setParticipantToDelete({ id: participante.id, name: participante.nombre });
+                              setDeleteModalOpen(true);
+                            }}
                             className="p-1.5 hover:bg-destructive/20 rounded transition-colors"
                             title="Eliminar"
                             aria-label={`Eliminar participante ${participante.id}`}
@@ -391,23 +393,18 @@ export function ParticipantesView() {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-card rounded-lg border border-border p-6 max-w-sm">
-            <h3 className="text-lg font-semibold mb-2">Confirmar eliminación</h3>
-            <p className="text-muted-foreground mb-6">¿Estás seguro de que deseas eliminar este participante?</p>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setDeleteConfirm(null)}>
-                Cancelar
-              </Button>
-              <Button variant="destructive" onClick={handleDelete}>
-                Eliminar
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ==== MODAL DE CONFIRMACIÓN ==== */}
+      <ConfirmDeleteModal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={() => {
+          if (participantToDelete) {
+            handleDelete({ id: Number(participantToDelete.id) });
+            setDeleteModalOpen(false);
+          }
+        }}
+        entityName={participantToDelete?.name ?? ''}
+      />
     </div>
   )
 }
