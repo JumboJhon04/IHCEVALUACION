@@ -1,0 +1,11 @@
+[2026-04-01T15:24:28.933Z] INFO: Servidor iniciado en http://localhost:3001 {}
+[2026-04-01T15:24:32.794Z] WARN: Ruta no encontrada {"method":"GET","path":"/"}
+[2026-04-01T15:24:33.163Z] WARN: Ruta no encontrada {"method":"GET","path":"/favicon.ico"}
+[2026-04-01T15:29:46.159Z] INFO: Servidor iniciado en http://localhost:3001 {}
+[2026-04-01T15:31:40.187Z] INFO: Servidor iniciado en http://localhost:3001 {}
+[2026-04-01T15:33:35.570Z] INFO: Servidor iniciado en http://localhost:3001 {}
+[2026-04-01T15:34:58.203Z] INFO: Servidor iniciado en http://localhost:3001 {}
+[2026-04-01T15:37:31.661Z] INFO: Servidor iniciado en http://localhost:3001 {}
+[2026-04-01T15:43:41.558Z] INFO: Servidor iniciado en http://localhost:3001 {}
+[2026-04-01T15:43:45.399Z] WARN: Ruta no encontrada {"method":"GET","path":"/"}
+[2026-04-01T15:43:45.572Z] WARN: Ruta no encontrada {"method":"GET","path":"/favicon.ico"}

@@ -1,0 +1,4 @@
+[2026-03-25T00:18:22.954Z] INFO: Servidor iniciado en http://localhost:3001 {}
+[2026-03-25T00:18:42.818Z] WARN: Ruta no encontrada {"method":"GET","path":"/"}
+[2026-03-25T00:18:43.036Z] WARN: Ruta no encontrada {"method":"GET","path":"/favicon.ico"}
+[2026-03-25T15:13:46.778Z] INFO: Servidor iniciado en http://localhost:3001 {}
