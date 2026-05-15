@@ -1,5 +1,5 @@
 "use client"
-
+import Breadcrumbs from '@/components/ui/breadcrumbs'
 import { useEffect, useMemo, useState } from "react"
 import {
   CheckCircle2,
@@ -237,6 +237,7 @@ export function DashboardView() {
         color: "text-success",
         bg: "bg-success/10",
         border: "border-success/20",
+        title: "Revisa las observaciones para mejorar el % de éxito",
       },
       {
         id: "tiempo",
@@ -247,6 +248,7 @@ export function DashboardView() {
         color: "text-info",
         bg: "bg-info/10",
         border: "border-info/20",
+        title: "Optimiza las tareas para reducir el tiempo promedio",
       },
       {
         id: "errores",
@@ -257,6 +259,7 @@ export function DashboardView() {
         color: "text-destructive",
         bg: "bg-destructive/10",
         border: "border-destructive/20",
+        title: "Revisa los hallazgos para reducir la cantidad de errores",
       },
       {
         id: "hallazgos",
@@ -267,6 +270,7 @@ export function DashboardView() {
         color: "text-warning",
         bg: "bg-warning/10",
         border: "border-warning/20",
+        title: "Resuelve los hallazgos pendientes para mejorar la usabilidad",
       },
     ]
 
@@ -286,6 +290,7 @@ export function DashboardView() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
+      <Breadcrumbs items={[{ label: "Dashboard", href: "/" }]} />
       {/* Page header */}
       <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card/80 px-6 py-6 shadow-sm backdrop-blur-sm">
         <div className="pointer-events-none absolute -top-20 right-0 h-44 w-44 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
@@ -315,6 +320,7 @@ export function DashboardView() {
             return (
               <article
                 key={kpi.id}
+                title={kpi.title}
                 className={`group relative overflow-hidden rounded-2xl border ${kpi.border} bg-card/95 p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md`}
                 aria-label={kpi.label}
               >
